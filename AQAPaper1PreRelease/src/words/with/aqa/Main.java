@@ -15,113 +15,113 @@ import java.util.*;
 
 public class Main {
     
-    class QueueOfTiles
+    class QueueOfTiles // linear queue: 1 per game, like tile bag, FIFO
     {
-        protected char[] contents;
-        protected int rear;
+        protected char[] contents; // use an array for chars in queue
+        protected int rear; // keep track of rear of queue
         protected int maxSize;
         
-        QueueOfTiles(int maxSize)
+        QueueOfTiles(int maxSize) // constructor
         {
-            contents = new char[maxSize];
-            rear = -1;
-            this.maxSize = maxSize;
-            for (int count = 0; count < maxSize; count++)
+            contents = new char[maxSize];// create contents array up to max allowed size
+            rear = -1; // initially it is empty
+            this.maxSize = maxSize; //set max size of queue
+            for (int count = 0; count < maxSize; count++) //iterate through up to max size
             { 
-                add();
+                add(); // add letters to the array
             }
         }
 
-        boolean isEmpty()
+        boolean isEmpty() // check if queue is empty
         {
-            if (rear == -1) 
+            if (rear == -1)  // if empty
             {
-                return true;
+                return true; //true
             }
-            else
+            else // else
             {
-                return false;
+                return false; // false
             }
         }
         
-        char remove()
+        char remove() // remove first element of queue
         {
             if (isEmpty()) {
-                return '\n';
+                return '\n'; // new line at end of queue
             }
             else
             {
-                char item = contents[0];
-                for (int count = 1; count < rear + 1; count++) {
+                char item = contents[0]; // store the first item of queue in a variable to be returned
+                for (int count = 1; count < rear + 1; count++) { // move each element one forwards in queue
                     contents[count - 1] = contents[count];
                 }
-                contents[rear] = '\n';
-                rear -= 1;
-                return item;
+                contents[rear] = '\n'; // change last element to empty (new line)
+                rear -= 1; // update index of rear element
+                return item; //return first element
             }
         }
         
-        void add()
+        void add() // add random chars to queue 
         {
-            Random rnd = new Random();
-            if (rear < maxSize - 1) 
+            Random rnd = new Random(); 
+            if (rear < maxSize - 1) // if haven't reached max size of queue 
             {
-                int randNo = rnd.nextInt(25);
-                rear += 1;
-                contents[rear] = (char)(65 + randNo);
+                int randNo = rnd.nextInt(25); // generate random number
+                rear += 1; // add 1 to the rear
+                contents[rear] = (char)(65 + randNo); // add 65 to random number (so that lower case  alphabet letter is stored)
             }
         }
         
         void show()
         {
-            if (rear != -1) 
+            if (rear != -1) //if not empty
             {
                 Console.println();
                 Console.print("The contents of the queue are: ");
-                for(char item : contents)
+                for(char item : contents) // iterate through queue
                 {
-                    Console.print(item);
+                    Console.print(item); // print each of the queue
                 }
                 Console.println();
             }
         }
     }
         
-    Map createTileDictionary()
+    Map createTileDictionary() // links each letter to its score
     {
-        Map<Character, Integer> tileDictionary = new HashMap<Character, Integer>();
+        Map<Character, Integer> tileDictionary = new HashMap<Character, Integer>(); // create map
         for (int count = 0; count < 26; count++) 
         {
             switch (count) {
-                case 0:
-                case 4:
-                case 8:
-                case 13:
-                case 14:
-                case 17:
-                case 18:
-                case 19:
+                case 0: // a
+                case 4: // e
+                case 8: // i
+                case 13: // n
+                case 14: // o
+                case 17: // r
+                case 18: // s
+                case 19: // t
                     tileDictionary.put((char)(65 + count), 1);
                     break;
-                case 1:
-                case 2:
-                case 3:
-                case 6:
-                case 11:
-                case 12:
-                case 15:
-                case 20:
+                case 1: // b
+                case 2: // c
+                case 3: // d
+                case 6: // g
+                case 11: // l
+                case 12: // m
+                case 15: // p
+                case 20: // u
                     tileDictionary.put((char)(65 + count), 2);
                     break;
-                case 5:
-                case 7:
-                case 10:
-                case 21:
-                case 22:
-                case 24:
+                case 5: // f
+                case 7: // h
+                case 10: // k
+                case 21: // v
+                case 22: // w
+                case 24: // y
                     tileDictionary.put((char)(65 + count), 3);
                     break;
-                default:
+                default: // j, q , x , z 
                     tileDictionary.put((char)(65 + count), 5);
                     break;
             }
@@ -129,125 +129,125 @@ public class Main {
         return tileDictionary;
     }
 
-    void displayTileValues(Map tileDictionary, String[] allowedWords)
+    void displayTileValues(Map tileDictionary, String[] allowedWords) // prints out all tiles and their associated values
     {
         Console.println();
         Console.println("TILE VALUES");
         Console.println();
-        for (Object letter : tileDictionary.keySet()) 
+        for (Object letter : tileDictionary.keySet()) // iterate through letters in dictionary 
         {
-            int points = (Integer) tileDictionary.get(letter);
-            Console.println("Points for " + letter + ": " + points);
+            int points = (int)tileDictionary.get(letter);  // get the points for the letter
+            Console.println("Points for " + letter + ": " + points); // print the letter and points 
         }
         Console.println();
     }
 
-    String getStartingHand(QueueOfTiles tileQueue, int startHandSize)
+    String getStartingHand(QueueOfTiles tileQueue, int startHandSize) // takes a starting hand for the player from the queue, and then replenishes queue  
     {
         String hand = "";
-        for (int count = 0; count < startHandSize; count++) {
-            hand += tileQueue.remove();
-            tileQueue.add();
+        for (int count = 0; count < startHandSize; count++) { // iterate from 0 to size of hand
+            hand += tileQueue.remove(); // dequeue from queue and contatonate into string
+            tileQueue.add(); // enqueue another char to the queue (so the number of elements in it remains the same). 
         }
         return hand;
     }
 
-    String[] loadAllowedWords()
+    String[] loadAllowedWords() // loads the allowed words from file and stores in string array
     {
-        String[] allowedWords = {};
+        String[] allowedWords = {}; // construct empty string
         try {
-            Path filePath = new File("aqawords.txt").toPath();
-            Charset charset = Charset.defaultCharset();        
-            List<String> stringList = Files.readAllLines(filePath, charset);
-            allowedWords = new String[stringList.size()];
+            Path filePath = new File("aqawords.txt").toPath(); // try to load file
+            Charset charset = Charset.defaultCharset(); // use the same char set as in text file        
+            List<String> stringList = Files.readAllLines(filePath, charset); // put all contents of the File into a stringList
+            allowedWords = new String[stringList.size()]; // convert list into array
             int count = 0;
-            for(String word: stringList)
+            for(String word: stringList) // iterate through list
             {
-                allowedWords[count] = word.trim().toUpperCase();
-                count++;
+                allowedWords[count] = word.trim().toUpperCase();// place upper case word (with no trailing/leading whitespace) into the array of allowed words
+                count++; // increment counter
             }
-        } catch (IOException e) {
+        } catch (IOException e) { // catch errors(e.g. file not found)
         }
         return allowedWords;            
     }
     
-    boolean checkWordIsInTiles(String word, String playerTiles)
+    boolean checkWordIsInTiles(String word, String playerTiles) // checks if typed word is contained within a player's tiles
     {
         boolean inTiles = true;
         String copyOfTiles = playerTiles;
-        for (int count = 0; count < word.length(); count++) {
-            if(copyOfTiles.contains(word.charAt(count) + ""))
+        for (int count = 0; count < word.length(); count++) { // iterate through the word 
+            if(copyOfTiles.contains(word.charAt(count) + "")) // if the player tiles contain the current character of the word
             {
-                copyOfTiles = copyOfTiles.replaceFirst(word.charAt(count) + "", "");
+                copyOfTiles = copyOfTiles.replaceFirst(word.charAt(count) + "", ""); // remove that character from the current copy of tiles
             }
-            else
+            else 
             {
-                inTiles = false;
+              inTiles = false;// if one char of a word isn't found, then the word isn't in the tiles so return false 
             }
         }
         return inTiles;
     }
     
-    boolean checkWordIsValid(String word, String[] allowedWords)
+    boolean checkWordIsValid(String word, String[] allowedWords) // checks a word played against the array of allowed words, currently linear search (implement binary)
     {
-        boolean validWord = false;
+        boolean validWord = false; // set the word to being not valid
         int count = 0;
-        while(count < allowedWords.length && !validWord)
+        while(count < allowedWords.length && !validWord) // iterate through the allowed words array
         {
-            if(allowedWords[count].equals(word))
+            if(allowedWords[count].equals(word)) // if the word is found in allowedWords
             {
-                validWord = true;
+                validWord = true; // the word is valid
             }
-            count += 1;
+            count += 1; // increment the counter
         }
         return validWord;
     }
 
     void addEndOfTurnTiles(QueueOfTiles tileQueue, Tiles playerTiles,
-            String newTileChoice, String choice)
+            String newTileChoice, String choice) // deals with adding tiles to hand at end of turn (from queue)
     {
         int noOfEndOfTurnTiles;
         if(newTileChoice.equals("1"))
         {
-            noOfEndOfTurnTiles = choice.length();
+            noOfEndOfTurnTiles = choice.length();  //replace tiles used
         }
         else if(newTileChoice.equals("2"))
         {
-            noOfEndOfTurnTiles = 3;
+            noOfEndOfTurnTiles = 3; //add 3 tiles
         }   
         else
         {
-            noOfEndOfTurnTiles = choice.length()+3;
+            noOfEndOfTurnTiles = choice.length()+3; // replace tiles and add 3
         }
         for (int count = 0; count < noOfEndOfTurnTiles; count++) 
         {
-            playerTiles.playerTiles += tileQueue.remove();
-            tileQueue.add();
+            playerTiles.playerTiles += tileQueue.remove();//dequeue the desired number of tiles
+            tileQueue.add(); //refill queue
         }
     }
     
     void fillHandWithTiles(QueueOfTiles tileQueue, Tiles playerTiles,
-            int maxHandSize)
+            int maxHandSize) // fills a player's hand with tiles (taken from queue)
     {
-        while(playerTiles.playerTiles.length() <= maxHandSize)
+        while(playerTiles.playerTiles.length() <= maxHandSize) //while hand isn't full
         {
-            playerTiles.playerTiles += tileQueue.remove();
-            tileQueue.add();
+            playerTiles.playerTiles += tileQueue.remove(); // dequeue a tile and add to player hand
+            tileQueue.add(); // replenish queue
         }
     }
     
-    int getScoreForWord(String word, Map tileDictionary)
+    int getScoreForWord(String word, Map tileDictionary) // calculates score of a word
     {
         int score = 0;
-        for (int count = 0; count < word.length(); count++) 
+        for (int count = 0; count < word.length(); count++)  //iterate through the word
         {
-            score += (Integer)tileDictionary.get(word.charAt(count));
+            score += (int)tileDictionary.get(word.charAt(count)); // retrieve score for each letter and add to word score
         }
-        if(word.length() > 7)
+        if(word.length() > 7) //if the word is very long add 20 to score
         {
             score += 20;
         }
-        else if(word.length() > 5)
+        else if(word.length() > 5) //if it is quite long, add 5 to score
         {
             score += 5;
         }
@@ -256,27 +256,27 @@ public class Main {
     
     void updateAfterAllowedWord(String word, Tiles playerTiles, 
             Score playerScore, TileCount playerTilesPlayed, Map tileDictionary, 
-            String[] allowedWords)
+            String[] allowedWords) // updates player info after they play a valid word
     {
-        playerTilesPlayed.numberOfTiles += word.length();
+        playerTilesPlayed.numberOfTiles += word.length(); // update the number of tiles played with the length of the word
         for(char letter : word.toCharArray())
         {
-            playerTiles.playerTiles = playerTiles.playerTiles.replaceFirst(letter + "", "");
+            playerTiles.playerTiles = playerTiles.playerTiles.replaceFirst(letter + "", ""); // remove the letters that were played
         }
-        playerScore.score += getScoreForWord(word, tileDictionary);      
+        playerScore.score += getScoreForWord(word, tileDictionary);     // calculate and update player score  
     }
     
     int updateScoreWithPenalty(int playerScore, String playerTiles, 
-            Map tileDictionary)
+            Map tileDictionary) // updates score with the penalty from having tiles left at end of game
     {
-        for (int count = 0; count < playerTiles.length(); count++) 
+        for (int count = 0; count < playerTiles.length(); count++) // for each tile left in hand
         {
-            playerScore -= (Integer)tileDictionary.get(playerTiles.charAt(count));
+            playerScore -= (Integer)tileDictionary.get(playerTiles.charAt(count)); // lose points equal to the value of the tile
         }
         return playerScore;
     }
     
-    String getChoice()
+    String getChoice() // asks player for choice (and shows options)
     {
         Console.println();
         Console.println("Either:");
@@ -292,10 +292,10 @@ public class Main {
         return choice;
     }
     
-    String getNewTileChoice()
+    String getNewTileChoice() // asks player for choice or replacing tiles (after a valid word is played) 
     {
       String newTileChoice = "";
-      do
+      do //repeat until valid choice is entered
       {
           Console.println("Do you want to:"); 
           Console.println("     replace the tiles you used (1) OR");
@@ -309,7 +309,7 @@ public class Main {
       return newTileChoice;   
     }
     
-    void displayTilesInHand(String PlayerTiles)
+    void displayTilesInHand(String PlayerTiles) //prints out a player's hand
     {
         Console.println();
         Console.println("Your current hand: " + PlayerTiles);
@@ -318,33 +318,33 @@ public class Main {
     void haveTurn(String playerName, Tiles playerTiles, 
             TileCount playerTilesPlayed, Score playerScore, Map tileDictionary, 
             QueueOfTiles tileQueue, String[] allowedWords, int maxHandSize, 
-            int noOfEndOfTurnTiles)
+            int noOfEndOfTurnTiles) // player's turn
     {
       Console.println();
-      Console.println(playerName + " it is your turn.");
-      displayTilesInHand(playerTiles.playerTiles);
+      Console.println(playerName + " it is your turn."); // display player name
+      displayTilesInHand(playerTiles.playerTiles); // display player tiles
       String newTileChoice = "2";
       boolean validChoice = false;
       boolean validWord;
-      while (!validChoice)
+      while (!validChoice) // while the player hasn't done something valid
       {
-        String choice = getChoice();
+        String choice = getChoice(); // get player's choice
         if (choice.equals("1"))
         {
-          displayTileValues(tileDictionary, allowedWords);
+          displayTileValues(tileDictionary, allowedWords);// display value of each character
         }
         else if (choice.equals("4"))
         {
-          tileQueue.show();
+          tileQueue.show(); // show queue of tiles
         }
         else if (choice.equals("7"))
         {
-          displayTilesInHand(playerTiles.playerTiles);
+          displayTilesInHand(playerTiles.playerTiles); // show tiles in the player's hand
         }
         else if (choice.equals("0"))
         {
-          validChoice = true;
-          fillHandWithTiles(tileQueue, playerTiles, maxHandSize);
+          validChoice = true; //break from while loop 
+          fillHandWithTiles(tileQueue, playerTiles, maxHandSize); // fill hand to max size
         }
         else
         {
@@ -355,19 +355,19 @@ public class Main {
           }
           else
           {
-            validWord = checkWordIsInTiles(choice, playerTiles.playerTiles);
+            validWord = checkWordIsInTiles(choice, playerTiles.playerTiles); // check user has typed something from their hand
           }
-          if (validWord)
+          if (validWord) 
           {
-            validWord = checkWordIsValid(choice, allowedWords);
-            if (validWord)
+            validWord = checkWordIsValid(choice, allowedWords); // check if the word is in allowed words list
+            if (validWord) // if it is 
             {
               Console.println();
               Console.println("Valid word");
               Console.println();
               updateAfterAllowedWord(choice, playerTiles, playerScore, 
-                      playerTilesPlayed, tileDictionary, allowedWords);
-              newTileChoice = getNewTileChoice();
+                      playerTilesPlayed, tileDictionary, allowedWords); // update player information based on allowed words 
+              newTileChoice = getNewTileChoice(); // give player a choice of getting new tiles
             }
           }
           if (!validWord)
@@ -378,7 +378,7 @@ public class Main {
           }
           if (!newTileChoice.equals("4"))
           {
-            addEndOfTurnTiles(tileQueue, playerTiles, newTileChoice, choice);
+            addEndOfTurnTiles(tileQueue, playerTiles, newTileChoice, choice); // add the tiles they have selected
           }
           Console.println();
           Console.println("Your word was:" + choice);
@@ -388,7 +388,7 @@ public class Main {
       }
     }
     
-    void displayWinner(int playerOneScore, int playerTwoScore)
+    void displayWinner(int playerOneScore, int playerTwoScore) // compares scores and displays winner
     {
       Console.println();
       Console.println("**** GAME OVER! ****");
@@ -412,26 +412,26 @@ public class Main {
     
     void playGame(String[] allowedWords, Map tileDictionary, boolean randomStart, 
             int startHandSize, int maxHandSize, int maxTilesPlayed, 
-            int noOfEndOfTurnTiles)
+            int noOfEndOfTurnTiles) // plays the game?
     {
-      Score playerOneScore = new Score();
+      Score playerOneScore = new Score(); // player one's score is 50
       playerOneScore.score = 50;
-      Score playerTwoScore = new Score();
+      Score playerTwoScore = new Score(); // player two's score is 50
       playerTwoScore.score = 50;
-      TileCount playerOneTilesPlayed = new TileCount();
+      TileCount playerOneTilesPlayed = new TileCount(); // player one's tile count is 0
       playerOneTilesPlayed.numberOfTiles = 0;
-      TileCount playerTwoTilesPlayed = new TileCount();
+      TileCount playerTwoTilesPlayed = new TileCount();// player two's tile count is 0
       playerTwoTilesPlayed.numberOfTiles = 0;
-      Tiles playerOneTiles = new Tiles();
+      Tiles playerOneTiles = new Tiles(); 
       Tiles playerTwoTiles = new Tiles();
       QueueOfTiles tileQueue  = new QueueOfTiles(20); 
       if(randomStart)
       {
-        playerOneTiles.playerTiles = getStartingHand(tileQueue, startHandSize);
-        playerTwoTiles.playerTiles = getStartingHand(tileQueue, startHandSize);
+        playerOneTiles.playerTiles = getStartingHand(tileQueue, startHandSize); // give player one a random hand
+        playerTwoTiles.playerTiles = getStartingHand(tileQueue, startHandSize); // give player two a random hand
       }
       else
-      {
+      { // for training game
         playerOneTiles.playerTiles = "BTAHANDENONSARJ";
         playerTwoTiles.playerTiles = "CELZXIOTNESMUAA";
       }
@@ -439,26 +439,26 @@ public class Main {
               playerTwoTilesPlayed.numberOfTiles <= maxTilesPlayed && 
               playerOneTiles.playerTiles.length() < maxHandSize && 
               playerTwoTiles.playerTiles.length() < maxHandSize)
-      {
+      { // while the game should continue
         haveTurn("Player One", playerOneTiles, playerOneTilesPlayed, playerOneScore, 
                 tileDictionary, tileQueue, allowedWords, maxHandSize, 
-                noOfEndOfTurnTiles);
+                noOfEndOfTurnTiles); // player one takes a turn
         Console.println();
         Console.println("Press Enter to continue");
         Console.readLine();
         Console.println();
         haveTurn("Player Two", playerTwoTiles, playerTwoTilesPlayed, playerTwoScore, 
                 tileDictionary, tileQueue, allowedWords, maxHandSize, 
-                noOfEndOfTurnTiles);
+                noOfEndOfTurnTiles); // player two takes a turn
       }
       playerOneScore.score = updateScoreWithPenalty(playerOneScore.score, 
-              playerOneTiles.playerTiles, tileDictionary);
+              playerOneTiles.playerTiles, tileDictionary); 
       playerTwoScore.score = updateScoreWithPenalty(playerTwoScore.score, 
-              playerTwoTiles.playerTiles, tileDictionary);
-      displayWinner(playerOneScore.score, playerTwoScore.score);   
+              playerTwoTiles.playerTiles, tileDictionary); // calculate final scores
+      displayWinner(playerOneScore.score, playerTwoScore.score); // display winner  
     }
 
-    void displayMenu()
+    void displayMenu() //prints out the menu
     {
       Console.println();
       Console.println("=========");
@@ -503,8 +503,8 @@ public class Main {
       Console.println("++++++++++++++++++++++++++++++++++++++");
       Console.println();
       Console.println();
-      String[] allowedWords = loadAllowedWords();
-      Map tileDictionary = createTileDictionary();
+      String[] allowedWords = loadAllowedWords(); // load file for allowed words
+      Map tileDictionary = createTileDictionary(); // map letters to their score
       int maxHandSize = 20;
       int maxTilesPlayed = 50;
       int noOfEndOfTurnTiles = 3;
@@ -518,12 +518,12 @@ public class Main {
         if (choice.equals("1"))
         {
           playGame(allowedWords, tileDictionary, true, startHandSize, 
-                  maxHandSize, maxTilesPlayed, noOfEndOfTurnTiles);
+                  maxHandSize, maxTilesPlayed, noOfEndOfTurnTiles); //random hand
         }
         else if (choice.equals("2"))
         {
           playGame(allowedWords, tileDictionary, false, 15, maxHandSize, 
-                  maxTilesPlayed, noOfEndOfTurnTiles);
+                  maxTilesPlayed, noOfEndOfTurnTiles); // training hand
         }
       }
     }
